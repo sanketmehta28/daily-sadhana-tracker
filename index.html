@@ -531,11 +531,144 @@
 
   .btn-primary:hover { opacity: 0.9; }
 
+  /* Water Task */
+  .water-card {
+    background: rgba(30, 80, 120, 0.15);
+    border: 1px solid rgba(100, 180, 255, 0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .water-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: rgba(100, 180, 255, 0.5);
+  }
+
+  .water-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .water-title-block { flex: 1; }
+
+  .water-name {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--warm-cream);
+    margin-bottom: 2px;
+  }
+
+  .water-subtitle {
+    font-size: 0.75rem;
+    color: rgba(100,180,255,0.7);
+    letter-spacing: 0.5px;
+  }
+
+  .water-count-badge {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #64B4FF;
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* Water bottle progress */
+  .water-progress-wrap {
+    margin-bottom: 12px;
+  }
+
+  .water-track {
+    background: rgba(255,255,255,0.07);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+
+  .water-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1E90FF, #64B4FF);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+
+  .water-progress-label {
+    font-size: 0.72rem;
+    color: rgba(100,180,255,0.6);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Subtask grid */
+  .water-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 5px;
+  }
+
+  .water-cup {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    border: 1px solid rgba(100,180,255,0.25);
+    background: rgba(100,180,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .water-cup:hover {
+    background: rgba(100,180,255,0.15);
+    border-color: rgba(100,180,255,0.5);
+    transform: scale(1.08);
+  }
+
+  .water-cup.filled {
+    background: rgba(30, 100, 200, 0.35);
+    border-color: rgba(100,180,255,0.5);
+  }
+
+  .water-cup.filled::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60%;
+    background: rgba(100,180,255,0.25);
+    border-radius: 0 0 5px 5px;
+  }
+
+  .water-cup-label {
+    font-size: 0.55rem;
+    color: rgba(100,180,255,0.5);
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .water-cup.filled .water-cup-label {
+    color: rgba(150,210,255,0.8);
+  }
+
   @media (max-width: 480px) {
     .header h1 { font-size: 1.7rem; }
     .weekly-summary { grid-template-columns: 1fr 1fr; }
     .weekly-summary .progress-wrap { grid-column: 1 / -1; }
     .stat-number { font-size: 1.9rem; }
+    .water-grid { grid-template-columns: repeat(6, 1fr); }
   }
 </style>
 </head>
@@ -586,6 +719,27 @@
   <!-- Task List -->
   <p class="section-title" id="selectedDayLabel">Today's Sadhana</p>
   <div class="tasks-list" id="taskList"></div>
+
+  <!-- Water Task -->
+  <p class="section-title" style="margin-top:8px;">💧 Water Intake — 3 Litres</p>
+  <div class="water-card" id="waterCard">
+    <div class="water-header">
+      <span style="font-size:1.6rem;">💧</span>
+      <div class="water-title-block">
+        <div class="water-name">Drink Water — 100ml per cup</div>
+        <div class="water-subtitle" id="waterSubtitle">0 / 30 cups · 0 ml of 3000 ml</div>
+      </div>
+      <div class="water-count-badge" id="waterCountBadge">0/30</div>
+    </div>
+    <div class="water-progress-wrap">
+      <div class="water-track"><div class="water-fill" id="waterFill" style="width:0%"></div></div>
+      <div class="water-progress-label">
+        <span id="waterMlDone">0 ml</span>
+        <span>3000 ml</span>
+      </div>
+    </div>
+    <div class="water-grid" id="waterGrid"></div>
+  </div>
 
   <div class="divider">· · ·</div>
 
@@ -766,6 +920,8 @@ function render() {
     card.onclick = () => toggleTask(task.id);
     taskListEl.appendChild(card);
   });
+
+  renderWater();
 }
 
 // ── INTERACTIONS ────────────────────────────────────────────────────────────
@@ -784,6 +940,7 @@ function markAllDone() {
   const weekStart = getWeekStart(weekOffset);
   const dayData = getDefaultDayData().map(t => ({ ...t, done: true }));
   saveDayData(weekStart, selectedDayIndex, dayData);
+  saveWaterData(weekStart, selectedDayIndex, new Array(WATER_CUPS).fill(true));
   showToast('🕉️ All practices completed for today!');
   render();
 }
@@ -792,6 +949,7 @@ function resetDay() {
   if (!confirm('Reset all tasks for this day?')) return;
   const weekStart = getWeekStart(weekOffset);
   saveDayData(weekStart, selectedDayIndex, getDefaultDayData());
+  saveWaterData(weekStart, selectedDayIndex, new Array(WATER_CUPS).fill(false));
   showToast('↺ Day reset');
   render();
 }
@@ -845,6 +1003,59 @@ function saveAlarmTime() {
   showToast(`🔔 Reminder set for ${time}`);
   closeModal();
   render();
+}
+
+// ── WATER TASK ─────────────────────────────────────────────────────────────
+const WATER_CUPS = 30; // 30 × 100ml = 3000ml
+
+function waterKey(weekStart, dayIdx) {
+  return `sadhana_water_${weekStart}_${dayIdx}`;
+}
+
+function loadWaterData(weekStart, dayIdx) {
+  try {
+    const raw = localStorage.getItem(waterKey(weekStart, dayIdx));
+    return raw ? JSON.parse(raw) : new Array(WATER_CUPS).fill(false);
+  } catch { return new Array(WATER_CUPS).fill(false); }
+}
+
+function saveWaterData(weekStart, dayIdx, data) {
+  try { localStorage.setItem(waterKey(weekStart, dayIdx), JSON.stringify(data)); } catch {}
+}
+
+function renderWater() {
+  const weekStart = getWeekStart(weekOffset);
+  const cups = loadWaterData(weekStart, selectedDayIndex);
+  const filled = cups.filter(Boolean).length;
+  const ml = filled * 100;
+  const pct = Math.round(filled / WATER_CUPS * 100);
+
+  document.getElementById('waterSubtitle').textContent = `${filled} / ${WATER_CUPS} cups · ${ml} ml of 3000 ml`;
+  document.getElementById('waterCountBadge').textContent = `${filled}/${WATER_CUPS}`;
+  document.getElementById('waterFill').style.width = pct + '%';
+  document.getElementById('waterMlDone').textContent = `${ml} ml`;
+
+  const grid = document.getElementById('waterGrid');
+  grid.innerHTML = '';
+  cups.forEach((isFilled, i) => {
+    const cup = document.createElement('div');
+    cup.className = `water-cup ${isFilled ? 'filled' : ''}`;
+    cup.title = `Cup ${i+1} — ${(i+1)*100}ml`;
+    cup.innerHTML = `<span style="font-size:1rem;z-index:1;position:relative">${isFilled ? '💧' : '○'}</span><span class="water-cup-label">${(i+1)*100}ml</span>`;
+    cup.onclick = () => toggleWaterCup(i);
+    grid.appendChild(cup);
+  });
+}
+
+function toggleWaterCup(index) {
+  const weekStart = getWeekStart(weekOffset);
+  const cups = loadWaterData(weekStart, selectedDayIndex);
+  cups[index] = !cups[index];
+  saveWaterData(weekStart, selectedDayIndex, cups);
+  const filled = cups.filter(Boolean).length;
+  if (filled === WATER_CUPS) showToast('🎉 3 Litres complete! Great job!');
+  else showToast(cups[index] ? `💧 ${filled * 100}ml done` : `↺ Cup unmarked`);
+  renderWater();
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
