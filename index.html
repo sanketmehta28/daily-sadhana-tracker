@@ -467,6 +467,187 @@
     margin: 24px 0 20px;
   }
 
+  /* ── REPORT MODAL ──────────────────────────────────────────── */
+  .report-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 300;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .report-overlay.open { display: flex; }
+
+  .report-modal {
+    background: linear-gradient(160deg, #2A1810, #3D2B1F);
+    border: 1px solid rgba(201,146,42,0.3);
+    border-radius: 20px;
+    width: 100%; max-width: 560px;
+    margin: auto;
+    padding: 28px 22px 28px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  .report-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .report-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--light-gold);
+  }
+
+  .report-close {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,146,42,0.2);
+    color: var(--smoke);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .report-close:hover { color: var(--warm-cream); background: rgba(255,255,255,0.1); }
+
+  .report-week-label {
+    font-size: 0.75rem;
+    color: var(--smoke);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* Score ring */
+  .report-score-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: rgba(201,146,42,0.06);
+    border: 1px solid rgba(201,146,42,0.15);
+    border-radius: 14px;
+  }
+
+  .score-ring-wrap { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
+  .score-ring-wrap svg { transform: rotate(-90deg); }
+  .score-ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+  .score-ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+  .score-ring-text {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+  }
+  .score-ring-pct { font-size: 1.5rem; font-weight: 600; color: var(--light-gold); line-height: 1; }
+  .score-ring-sub { font-size: 0.6rem; color: var(--smoke); }
+
+  .score-meta { display: flex; flex-direction: column; gap: 8px; }
+  .score-meta-row { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
+  .score-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Day heatmap */
+  .report-section { margin-bottom: 22px; }
+  .report-section-title {
+    font-size: 0.7rem;
+    color: var(--smoke);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .heatmap-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .heatmap-cell {
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 0.68rem;
+  }
+  .heatmap-cell .hm-day { color: var(--smoke); margin-bottom: 4px; font-size: 0.62rem; letter-spacing: 0.5px; }
+  .heatmap-cell .hm-pct { font-weight: 600; font-size: 0.8rem; }
+  .heatmap-cell .hm-bar {
+    height: 3px; border-radius: 100px; margin-top: 4px;
+  }
+
+  /* Task breakdown bars */
+  .task-breakdown { display: flex; flex-direction: column; gap: 8px; }
+
+  .tb-row {
+    display: grid;
+    grid-template-columns: 22px 1fr 80px 36px;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+
+  .tb-emoji { text-align: center; font-size: 1rem; }
+  .tb-bar-wrap { background: rgba(255,255,255,0.06); border-radius: 100px; height: 6px; overflow: hidden; }
+  .tb-bar-fill { height: 100%; border-radius: 100px; transition: width 0.6s ease; }
+  .tb-label { font-size: 0.7rem; color: var(--smoke); text-align: right; white-space: nowrap; }
+  .tb-pct { font-size: 0.75rem; font-weight: 600; text-align: right; }
+
+  /* AI insight box */
+  .ai-insight {
+    background: rgba(30,50,80,0.3);
+    border: 1px solid rgba(100,160,255,0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 22px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: rgba(253,246,236,0.85);
+    min-height: 60px;
+  }
+
+  .ai-insight-label {
+    font-size: 0.65rem;
+    color: rgba(100,160,255,0.7);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .ai-thinking {
+    display: flex; gap: 5px; align-items: center;
+    color: var(--smoke); font-size: 0.8rem; font-style: italic;
+  }
+
+  .ai-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: rgba(100,160,255,0.5);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  .ai-dot:nth-child(2) { animation-delay: 0.2s; }
+  .ai-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* Report button in actions */
+  .btn-report {
+    background: linear-gradient(135deg, rgba(92,26,26,0.6), rgba(61,43,31,0.6));
+    color: var(--light-gold);
+    border: 1px solid rgba(201,146,42,0.35);
+  }
+  .btn-report:hover { background: rgba(201,146,42,0.15); }
+
   /* ── ADD TASK ─────────────────────────────────────────────── */
   .fab {
     position: fixed;
@@ -855,8 +1036,79 @@
   <div class="divider">· · ·</div>
 
   <div class="actions">
+    <button class="btn btn-report" onclick="openReport()">📊 Weekly Report</button>
     <button class="btn btn-ghost" onclick="markAllDone()">✓ Mark All Done</button>
     <button class="btn btn-danger" onclick="resetDay()">↺ Reset Day</button>
+  </div>
+</div>
+
+<!-- Report Modal -->
+<div class="report-overlay" id="reportOverlay">
+  <div class="report-modal">
+    <div class="report-header">
+      <h2>📊 Weekly Report</h2>
+      <button class="report-close" onclick="closeReport()">✕</button>
+    </div>
+    <div class="report-week-label" id="reportWeekLabel"></div>
+
+    <!-- Score ring -->
+    <div class="report-score-wrap">
+      <div class="score-ring-wrap">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle class="score-ring-bg" cx="45" cy="45" r="38"/>
+          <circle class="score-ring-fill" id="ringFill" cx="45" cy="45" r="38"
+            stroke-dasharray="238.76" stroke-dashoffset="238.76"/>
+        </svg>
+        <div class="score-ring-text">
+          <span class="score-ring-pct" id="ringPct">0%</span>
+          <span class="score-ring-sub">done</span>
+        </div>
+      </div>
+      <div class="score-meta">
+        <div class="score-meta-row">
+          <span class="score-dot" style="background:#6FCF97"></span>
+          <span id="rCompleted" style="color:#6FCF97;font-weight:600">0</span>
+          <span style="color:var(--smoke)">completed</span>
+        </div>
+        <div class="score-meta-row">
+          <span class="score-dot" style="background:var(--lotus-pink)"></span>
+          <span id="rPending" style="color:var(--lotus-pink);font-weight:600">0</span>
+          <span style="color:var(--smoke)">pending</span>
+        </div>
+        <div class="score-meta-row">
+          <span class="score-dot" style="background:var(--gold)"></span>
+          <span id="rTotal" style="color:var(--gold);font-weight:600">0</span>
+          <span style="color:var(--smoke)">total</span>
+        </div>
+        <div class="score-meta-row" style="margin-top:4px;">
+          <span style="font-size:1rem">💧</span>
+          <span id="rWater" style="color:#64B4FF;font-weight:600;font-size:0.78rem">0/210 cups</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Insight -->
+    <div class="report-section">
+      <div class="ai-insight-label">✦ AI Analysis</div>
+      <div class="ai-insight" id="aiInsight">
+        <div class="ai-thinking">
+          <div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>
+          <span>Generating your weekly insight…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day heatmap -->
+    <div class="report-section">
+      <div class="report-section-title">Daily Completion</div>
+      <div class="heatmap-row" id="reportHeatmap"></div>
+    </div>
+
+    <!-- Task breakdown -->
+    <div class="report-section">
+      <div class="report-section-title">Task Performance</div>
+      <div class="task-breakdown" id="reportBreakdown"></div>
+    </div>
   </div>
 </div>
 
@@ -1203,6 +1455,149 @@ function toggleWaterCup(index) {
   if (filled === WATER_CUPS) showToast('🎉 3 Litres complete! Great job!');
   else showToast(cups[index] ? `💧 ${filled * 100}ml done` : `↺ Cup unmarked`);
   renderWater();
+}
+
+// ── WEEKLY REPORT ───────────────────────────────────────────────────────────
+function openReport() {
+  document.getElementById('reportOverlay').classList.add('open');
+  renderReport();
+}
+
+function closeReport() {
+  document.getElementById('reportOverlay').classList.remove('open');
+}
+
+function getWeekReportData() {
+  const weekStart = getWeekStart(weekOffset);
+  const allTasks = getAllTasks();
+  const days = [];
+  let totalCompleted = 0, totalPossible = 0, totalWaterCups = 0;
+
+  // Per-task completions across week
+  const taskStats = {}; // taskId -> { done: 0, total: 7 }
+  allTasks.forEach(t => { taskStats[t.id] = { done: 0, total: 7, name: t.name, emoji: t.emoji }; });
+
+  for (let d = 0; d < 7; d++) {
+    const data = loadDayData(weekStart, d) || allTasks.map(t => ({ id: t.id, done: false }));
+    const water = loadWaterData(weekStart, d);
+    const done = data.filter(t => t.done).length;
+    const pct = allTasks.length ? Math.round(done / allTasks.length * 100) : 0;
+    const waterDone = water.filter(Boolean).length;
+    days.push({ dayIdx: d, done, total: allTasks.length, pct, waterDone });
+    totalCompleted += done;
+    totalPossible += allTasks.length;
+    totalWaterCups += waterDone;
+    data.forEach(t => { if (t.done && taskStats[t.id]) taskStats[t.id].done++; });
+  }
+
+  return { days, totalCompleted, totalPossible, totalWaterCups, taskStats, allTasks, weekStart };
+}
+
+function renderReport() {
+  const { days, totalCompleted, totalPossible, totalWaterCups, taskStats, allTasks } = getWeekReportData();
+  const pct = totalPossible ? Math.round(totalCompleted / totalPossible * 100) : 0;
+  const weekStart = getWeekStart(weekOffset);
+
+  document.getElementById('reportWeekLabel').textContent = formatWeekLabel(weekStart);
+
+  // Ring
+  const circumference = 238.76;
+  const offset = circumference - (pct / 100) * circumference;
+  const ringFill = document.getElementById('ringFill');
+  ringFill.style.strokeDashoffset = circumference; // reset
+  const ringColor = pct >= 80 ? '#6FCF97' : pct >= 50 ? '#C9922A' : '#D4867A';
+  ringFill.style.stroke = ringColor;
+  setTimeout(() => { ringFill.style.strokeDashoffset = offset; }, 100);
+
+  document.getElementById('ringPct').textContent = pct + '%';
+  document.getElementById('ringPct').style.color = ringColor;
+  document.getElementById('rCompleted').textContent = totalCompleted;
+  document.getElementById('rPending').textContent = totalPossible - totalCompleted;
+  document.getElementById('rTotal').textContent = totalPossible;
+  document.getElementById('rWater').textContent = `${totalWaterCups}/${WATER_CUPS * 7} cups · ${totalWaterCups * 100}ml`;
+
+  // Heatmap
+  const heatmap = document.getElementById('reportHeatmap');
+  heatmap.innerHTML = '';
+  days.forEach(day => {
+    const p = day.pct;
+    const bg = p === 0 ? 'rgba(255,255,255,0.04)' : p < 40 ? 'rgba(212,134,122,0.15)' : p < 75 ? 'rgba(201,146,42,0.15)' : 'rgba(74,124,89,0.2)';
+    const bar = p === 0 ? 'rgba(255,255,255,0.1)' : p < 40 ? '#D4867A' : p < 75 ? '#C9922A' : '#6FCF97';
+    const textColor = p === 0 ? 'var(--smoke)' : p < 40 ? '#D4867A' : p < 75 ? '#C9922A' : '#6FCF97';
+    const cell = document.createElement('div');
+    cell.className = 'heatmap-cell';
+    cell.style.background = bg;
+    cell.innerHTML = `
+      <div class="hm-day">${WEEK_DAYS[day.dayIdx]}</div>
+      <div class="hm-pct" style="color:${textColor}">${p}%</div>
+      <div class="hm-bar" style="background:${bar};width:${p}%"></div>
+    `;
+    heatmap.appendChild(cell);
+  });
+
+  // Task breakdown
+  const breakdown = document.getElementById('reportBreakdown');
+  breakdown.innerHTML = '';
+  const sorted = allTasks.slice().sort((a, b) => (taskStats[b.id]?.done || 0) - (taskStats[a.id]?.done || 0));
+  sorted.forEach(task => {
+    const s = taskStats[task.id] || { done: 0, total: 7 };
+    const p = Math.round(s.done / s.total * 100);
+    const color = p >= 80 ? '#6FCF97' : p >= 50 ? '#C9922A' : '#D4867A';
+    const row = document.createElement('div');
+    row.className = 'tb-row';
+    row.innerHTML = `
+      <span class="tb-emoji">${task.emoji}</span>
+      <div class="tb-bar-wrap"><div class="tb-bar-fill" style="width:${p}%;background:${color}"></div></div>
+      <span class="tb-label" style="color:var(--smoke)">${task.name.length > 18 ? task.name.slice(0,17)+'…' : task.name}</span>
+      <span class="tb-pct" style="color:${color}">${p}%</span>
+    `;
+    breakdown.appendChild(row);
+  });
+
+  // AI Insight
+  generateAIInsight({ days, totalCompleted, totalPossible, totalWaterCups, taskStats, allTasks, pct });
+}
+
+async function generateAIInsight({ days, totalCompleted, totalPossible, totalWaterCups, taskStats, allTasks, pct }) {
+  const insightEl = document.getElementById('aiInsight');
+  insightEl.innerHTML = `<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Analysing your week…</span></div>`;
+
+  // Build summary for AI
+  const bestDay = days.reduce((a, b) => a.pct >= b.pct ? a : b);
+  const worstDay = days.reduce((a, b) => a.pct <= b.pct ? a : b);
+  const topTasks = allTasks.filter(t => taskStats[t.id]?.done === 7).map(t => t.name);
+  const missedTasks = allTasks.filter(t => taskStats[t.id]?.done === 0).map(t => t.name);
+  const waterLitres = (totalWaterCups * 100 / 1000).toFixed(1);
+
+  const prompt = `You are a warm, encouraging Vedic wellness coach. Analyse this week's sadhana (spiritual routine) data and give a concise 3-4 sentence personalised insight. Be specific, warm and motivating. Mention specific tasks by name.
+
+Week Summary:
+- Overall completion: ${pct}% (${totalCompleted}/${totalPossible} tasks)
+- Best day: ${WEEK_DAYS_FULL[bestDay.dayIdx]} (${bestDay.pct}%)
+- Weakest day: ${WEEK_DAYS_FULL[worstDay.dayIdx]} (${worstDay.pct}%)
+- Tasks done all 7 days: ${topTasks.length ? topTasks.join(', ') : 'none'}
+- Tasks never done: ${missedTasks.length ? missedTasks.join(', ') : 'none'}
+- Water intake this week: ${waterLitres} litres total (goal: 21 litres)
+- Per-task completion rates: ${allTasks.map(t => `${t.name}: ${Math.round((taskStats[t.id]?.done||0)/7*100)}%`).join('; ')}
+
+Give a short, warm, specific analysis (3-4 sentences). No bullet points. No greetings. Just the insight paragraph.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+    insightEl.innerHTML = text || 'Unable to generate insight.';
+  } catch (e) {
+    insightEl.innerHTML = `This week you completed <strong>${pct}%</strong> of your sadhana — ${pct >= 70 ? 'a strong showing! Keep building on this momentum.' : pct >= 40 ? 'a good start. Small improvements daily lead to lasting transformation.' : 'every step counts on the path of practice. Tomorrow is a fresh beginning. 🙏'}`;
+  }
 }
 
 // ── CUSTOM TASKS ────────────────────────────────────────────────────────────
