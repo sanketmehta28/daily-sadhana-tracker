@@ -467,6 +467,117 @@
     margin: 24px 0 20px;
   }
 
+  /* ── ADD TASK ─────────────────────────────────────────────── */
+  .fab {
+    position: fixed;
+    bottom: 28px; right: 22px;
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--saffron), var(--gold));
+    color: var(--earth);
+    font-size: 1.5rem;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(232,121,26,0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 150;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .fab:hover { transform: scale(1.1); box-shadow: 0 8px 32px rgba(232,121,26,0.6); }
+
+  .add-modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 210;
+    align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .add-modal-overlay.open { display: flex; }
+
+  .add-modal {
+    background: linear-gradient(135deg, #3D2B1F, #2A1810);
+    border: 1px solid rgba(201,146,42,0.3);
+    border-radius: 18px;
+    padding: 28px 22px 22px;
+    width: 100%; max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+  }
+
+  .add-modal h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    color: var(--light-gold);
+    margin-bottom: 18px;
+  }
+
+  .form-group { margin-bottom: 14px; }
+
+  .form-label {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--smoke);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,146,42,0.25);
+    border-radius: 8px;
+    color: var(--warm-cream);
+    font-size: 0.92rem;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: rgba(201,146,42,0.6); }
+  .form-input[type="time"] { color: var(--light-gold); }
+
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .emoji-btn {
+    aspect-ratio: 1;
+    border-radius: 7px;
+    border: 1px solid rgba(201,146,42,0.15);
+    background: rgba(255,255,255,0.03);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .emoji-btn:hover { background: rgba(201,146,42,0.12); transform: scale(1.1); }
+  .emoji-btn.selected { border-color: var(--gold); background: rgba(201,146,42,0.2); }
+
+  .selected-emoji-preview {
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  /* Delete button on task card */
+  .task-delete-btn {
+    background: none;
+    border: none;
+    color: rgba(212,134,122,0.4);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin-left: 4px;
+  }
+  .task-delete-btn:hover { color: var(--lotus-pink); background: rgba(212,134,122,0.1); }
+
   /* Alarm modal */
   .modal-overlay {
     display: none;
@@ -764,6 +875,37 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()" title="Add new task">＋</button>
+
+<!-- Add Task Modal -->
+<div class="add-modal-overlay" id="addModal">
+  <div class="add-modal">
+    <h3 id="addModalTitle">✦ Add New Task</h3>
+
+    <div class="form-group">
+      <label class="form-label">Task Name</label>
+      <input class="form-input" id="newTaskName" type="text" placeholder="e.g. Pranayama breathing…" maxlength="60" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Reminder Time</label>
+      <input class="form-input" id="newTaskTime" type="time" value="08:00" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Choose Emoji</label>
+      <div class="selected-emoji-preview" id="emojiPreview">🌸</div>
+      <div class="emoji-grid" id="emojiGrid"></div>
+    </div>
+
+    <div class="modal-btns" style="margin-top:18px;">
+      <button class="btn btn-ghost" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewTask()">Add Task ✦</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── TASKS ──────────────────────────────────────────────────────────────────
 const TASKS = [
@@ -832,9 +974,10 @@ function getDefaultDayData() {
 // ── WEEK SUMMARY ────────────────────────────────────────────────────────────
 function computeWeeklySummary(weekStart) {
   let completed = 0, total = 0;
+  const allTasks = getAllTasks();
   for (let d = 0; d < 7; d++) {
-    const data = loadDayData(weekStart, d) || getDefaultDayData();
-    total += data.length;
+    const data = loadDayData(weekStart, d) || allTasks.map(t => ({ id: t.id, done: false }));
+    total += allTasks.length;
     completed += data.filter(t => t.done).length;
   }
   return { completed, total, pending: total - completed };
@@ -873,15 +1016,16 @@ function render() {
   // Day tabs
   const tabsEl = document.getElementById('dayTabs');
   tabsEl.innerHTML = '';
+  const allTasksCount = getAllTasks().length;
   for (let d = 0; d < 7; d++) {
-    const data = loadDayData(weekStart, d) || getDefaultDayData();
+    const data = loadDayData(weekStart, d) || getAllTasks().map(t => ({ id: t.id, done: false }));
     const done = data.filter(t => t.done).length;
     const isToday = weekOffset === 0 && d === todayDayIdx;
     const isActive = d === selectedDayIndex;
-    const fullyDone = done === TASKS.length;
+    const fullyDone = done === allTasksCount;
     const tab = document.createElement('div');
     tab.className = `day-tab ${isActive ? 'active' : ''} ${isToday ? 'today' : ''} ${fullyDone ? 'fully-done' : ''}`;
-    tab.innerHTML = `<span class="day-name">${WEEK_DAYS[d]}</span><span class="day-count">${done}/${TASKS.length}</span>`;
+    tab.innerHTML = `<span class="day-name">${WEEK_DAYS[d]}</span><span class="day-count">${done}/${allTasksCount}</span>`;
     tab.onclick = () => { selectedDayIndex = d; render(); };
     tabsEl.appendChild(tab);
   }
@@ -894,10 +1038,10 @@ function render() {
   // Task list
   const taskListEl = document.getElementById('taskList');
   taskListEl.innerHTML = '';
-  const dayData = loadDayData(weekStart, selectedDayIndex) || getDefaultDayData();
+  const dayData = loadDayData(weekStart, selectedDayIndex) || getAllTasks().map(t => ({ id: t.id, done: false }));
   const alarms = loadAlarmTimes();
 
-  TASKS.forEach(task => {
+  getAllTasks().forEach(task => {
     const state = dayData.find(t => t.id === task.id) || { id: task.id, done: false };
     const alarmTime = alarms[task.id] || task.defaultTime;
     const card = document.createElement('div');
@@ -910,11 +1054,12 @@ function render() {
           <span style="color:var(--smoke);font-size:0.72rem;">⏰</span>
           <input class="task-time-input" type="time" value="${alarmTime}"
             title="Set reminder time"
-            onchange="updateAlarmTime(${task.id}, this.value)"
+            onchange="updateAlarmTime('${task.id}', this.value)"
             onclick="event.stopPropagation()" />
-          <span class="alarm-badge" id="alarm-badge-${task.id}" style="${alarmTime ? '' : 'display:none'}">Reminder set</span>
+          <span class="alarm-badge" style="${alarmTime ? '' : 'display:none'}">Reminder set</span>
         </div>
       </div>
+      ${task.custom ? `<button class="task-delete-btn" onclick="deleteCustomTask('${task.id}', event)" title="Delete task">✕</button>` : ''}
       <div class="task-checkbox">${state.done ? '✓' : ''}</div>
     `;
     card.onclick = () => toggleTask(task.id);
@@ -927,18 +1072,20 @@ function render() {
 // ── INTERACTIONS ────────────────────────────────────────────────────────────
 function toggleTask(taskId) {
   const weekStart = getWeekStart(weekOffset);
-  const dayData = loadDayData(weekStart, selectedDayIndex) || getDefaultDayData();
-  const task = dayData.find(t => t.id === taskId);
-  if (task) task.done = !task.done;
+  const allTasks = getAllTasks();
+  const dayData = loadDayData(weekStart, selectedDayIndex) || allTasks.map(t => ({ id: t.id, done: false }));
+  let task = dayData.find(t => t.id === taskId);
+  if (!task) { task = { id: taskId, done: false }; dayData.push(task); }
+  task.done = !task.done;
   saveDayData(weekStart, selectedDayIndex, dayData);
-  const taskName = TASKS.find(t => t.id === taskId)?.name || '';
+  const taskName = allTasks.find(t => t.id === taskId)?.name || '';
   showToast(task.done ? `✓ ${taskName} completed 🙏` : `↺ Marked as pending`);
   render();
 }
 
 function markAllDone() {
   const weekStart = getWeekStart(weekOffset);
-  const dayData = getDefaultDayData().map(t => ({ ...t, done: true }));
+  const dayData = getAllTasks().map(t => ({ id: t.id, done: true }));
   saveDayData(weekStart, selectedDayIndex, dayData);
   saveWaterData(weekStart, selectedDayIndex, new Array(WATER_CUPS).fill(true));
   showToast('🕉️ All practices completed for today!');
@@ -948,7 +1095,7 @@ function markAllDone() {
 function resetDay() {
   if (!confirm('Reset all tasks for this day?')) return;
   const weekStart = getWeekStart(weekOffset);
-  saveDayData(weekStart, selectedDayIndex, getDefaultDayData());
+  saveDayData(weekStart, selectedDayIndex, getAllTasks().map(t => ({ id: t.id, done: false })));
   saveWaterData(weekStart, selectedDayIndex, new Array(WATER_CUPS).fill(false));
   showToast('↺ Day reset');
   render();
@@ -1056,6 +1203,84 @@ function toggleWaterCup(index) {
   if (filled === WATER_CUPS) showToast('🎉 3 Litres complete! Great job!');
   else showToast(cups[index] ? `💧 ${filled * 100}ml done` : `↺ Cup unmarked`);
   renderWater();
+}
+
+// ── CUSTOM TASKS ────────────────────────────────────────────────────────────
+const EMOJI_OPTIONS = ['🌸','⭐','🔥','🌿','💎','🎯','📿','🌺','🦋','🌙','☀️','🕊️','🌊','🍃','🪬','🧿','🌻','🎶','🕯️','🪷','🌈','💫','🧘','🙏','🔱','🪔','🕉️','🌼','🍀','🌱','⚡','🎁','🏆','🦅','🌴','🐚'];
+
+let selectedEmoji = '🌸';
+
+function loadCustomTasks() {
+  try { return JSON.parse(localStorage.getItem('sadhana_custom_tasks') || '[]'); }
+  catch { return []; }
+}
+
+function saveCustomTasks(tasks) {
+  try { localStorage.setItem('sadhana_custom_tasks', JSON.stringify(tasks)); } catch {}
+}
+
+function getAllTasks() {
+  return [...TASKS, ...loadCustomTasks()];
+}
+
+function openAddModal() {
+  document.getElementById('newTaskName').value = '';
+  document.getElementById('newTaskTime').value = '08:00';
+  selectedEmoji = '🌸';
+  document.getElementById('emojiPreview').textContent = selectedEmoji;
+  renderEmojiGrid();
+  document.getElementById('addModal').classList.add('open');
+  setTimeout(() => document.getElementById('newTaskName').focus(), 100);
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('open');
+}
+
+function renderEmojiGrid() {
+  const grid = document.getElementById('emojiGrid');
+  grid.innerHTML = '';
+  EMOJI_OPTIONS.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = `emoji-btn ${em === selectedEmoji ? 'selected' : ''}`;
+    btn.textContent = em;
+    btn.onclick = () => {
+      selectedEmoji = em;
+      document.getElementById('emojiPreview').textContent = em;
+      renderEmojiGrid();
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function saveNewTask() {
+  const name = document.getElementById('newTaskName').value.trim();
+  if (!name) { showToast('⚠️ Please enter a task name'); return; }
+  const time = document.getElementById('newTaskTime').value;
+  const customTasks = loadCustomTasks();
+  const newId = 'c_' + Date.now();
+  customTasks.push({ id: newId, name, emoji: selectedEmoji, defaultTime: time, custom: true });
+  saveCustomTasks(customTasks);
+
+  // Save alarm time
+  const alarms = loadAlarmTimes();
+  alarms[newId] = time;
+  saveAlarmTimes(alarms);
+
+  showToast(`✦ "${name}" added!`);
+  closeAddModal();
+  render();
+}
+
+function deleteCustomTask(taskId, e) {
+  e.stopPropagation();
+  const task = loadCustomTasks().find(t => t.id === taskId);
+  if (!task) return;
+  if (!confirm(`Delete "${task.name}"?`)) return;
+  const customTasks = loadCustomTasks().filter(t => t.id !== taskId);
+  saveCustomTasks(customTasks);
+  showToast(`↺ Task deleted`);
+  render();
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
