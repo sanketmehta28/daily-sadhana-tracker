@@ -467,6 +467,217 @@
     margin: 24px 0 20px;
   }
 
+  /* ── DAY DETAIL MODAL ──────────────────────────────────────── */
+  .day-modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.78);
+    z-index: 400;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .day-modal-overlay.open { display: flex; }
+
+  .day-modal {
+    background: linear-gradient(160deg, #2A1810, #3D2B1F);
+    border: 1px solid rgba(201,146,42,0.3);
+    border-radius: 20px;
+    width: 100%; max-width: 540px;
+    margin: auto;
+    padding: 24px 20px 28px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+    animation: slideUp 0.25s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .day-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .day-modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--light-gold);
+  }
+
+  .day-modal-close {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,146,42,0.2);
+    color: var(--smoke);
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .day-modal-close:hover { color: var(--warm-cream); background: rgba(255,255,255,0.12); }
+
+  .day-modal-date {
+    font-size: 0.72rem;
+    color: var(--smoke);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  /* Mini progress bar inside day modal */
+  .day-modal-progress {
+    background: rgba(255,255,255,0.06);
+    border-radius: 100px;
+    height: 5px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .day-modal-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--saffron));
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+  .day-modal-progress-label {
+    font-size: 0.72rem;
+    color: var(--smoke);
+    text-align: right;
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+
+  /* Task rows inside modal */
+  .dm-task {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(201,146,42,0.12);
+    background: rgba(255,255,255,0.03);
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .dm-task:hover { background: rgba(201,146,42,0.07); border-color: rgba(201,146,42,0.25); }
+  .dm-task.dm-done {
+    background: rgba(74,124,89,0.1);
+    border-color: rgba(111,207,151,0.18);
+  }
+  .dm-task.dm-done::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; border-radius: 3px 0 0 3px;
+    background: #6FCF97;
+  }
+
+  .dm-emoji { font-size: 1.2rem; flex-shrink: 0; }
+
+  .dm-info { flex: 1; min-width: 0; }
+  .dm-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--warm-cream);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: color 0.2s;
+  }
+  .dm-task.dm-done .dm-name {
+    color: rgba(253,246,236,0.45);
+    text-decoration: line-through;
+    text-decoration-color: rgba(111,207,151,0.4);
+  }
+  .dm-time {
+    font-size: 0.72rem;
+    color: var(--gold);
+    margin-top: 2px;
+  }
+
+  .dm-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(201,146,42,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .dm-task.dm-done .dm-check {
+    background: #6FCF97;
+    border-color: #6FCF97;
+    color: var(--earth);
+  }
+
+  /* Water section inside modal */
+  .dm-water-section {
+    margin-top: 18px;
+    background: rgba(30,80,120,0.12);
+    border: 1px solid rgba(100,180,255,0.15);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .dm-water-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .dm-water-title { font-size: 0.82rem; color: var(--warm-cream); font-weight: 500; }
+  .dm-water-badge { font-size: 0.75rem; color: #64B4FF; font-weight: 600; }
+
+  .dm-water-bar-wrap {
+    background: rgba(255,255,255,0.06); border-radius: 100px; height: 5px; margin-bottom: 10px; overflow: hidden;
+  }
+  .dm-water-bar-fill {
+    height: 100%; background: linear-gradient(90deg, #1E90FF, #64B4FF);
+    border-radius: 100px; transition: width 0.4s ease;
+  }
+
+  .dm-water-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 4px;
+  }
+  .dm-cup {
+    aspect-ratio: 1;
+    border-radius: 5px;
+    border: 1px solid rgba(100,180,255,0.2);
+    background: rgba(100,180,255,0.04);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dm-cup:hover { transform: scale(1.12); background: rgba(100,180,255,0.15); }
+  .dm-cup.dm-filled {
+    background: rgba(30,100,200,0.3);
+    border-color: rgba(100,180,255,0.45);
+  }
+
+  /* Modal action buttons */
+  .dm-actions {
+    display: flex; gap: 8px; margin-top: 18px;
+  }
+  .dm-actions .btn { flex: 1; font-size: 0.8rem; padding: 9px 12px; }
+
+  /* Day tab clickable hint */
+  .day-tab { position: relative; }
+  .day-tab:hover::after {
+    content: 'tap to edit';
+    position: absolute;
+    bottom: -18px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.58rem;
+    color: var(--gold);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
   /* ── REPORT MODAL ──────────────────────────────────────────── */
   .report-overlay {
     display: none;
@@ -1042,6 +1253,37 @@
   </div>
 </div>
 
+<!-- Day Detail Modal -->
+<div class="day-modal-overlay" id="dayModal">
+  <div class="day-modal">
+    <div class="day-modal-header">
+      <div class="day-modal-title" id="dmTitle">Monday</div>
+      <button class="day-modal-close" onclick="closeDayModal()">✕</button>
+    </div>
+    <div class="day-modal-date" id="dmDate"></div>
+    <div class="day-modal-progress"><div class="day-modal-progress-fill" id="dmProgressFill" style="width:0%"></div></div>
+    <div class="day-modal-progress-label" id="dmProgressLabel">0 of 0 tasks done</div>
+
+    <div id="dmTaskList"></div>
+
+    <!-- Water -->
+    <div class="dm-water-section">
+      <div class="dm-water-header">
+        <div class="dm-water-title">💧 Water Intake</div>
+        <div class="dm-water-badge" id="dmWaterBadge">0/30 cups</div>
+      </div>
+      <div class="dm-water-bar-wrap"><div class="dm-water-bar-fill" id="dmWaterFill" style="width:0%"></div></div>
+      <div class="dm-water-grid" id="dmWaterGrid"></div>
+    </div>
+
+    <div class="dm-actions">
+      <button class="btn btn-ghost" onclick="dmMarkAllDone()">✓ All Done</button>
+      <button class="btn btn-danger" onclick="dmResetDay()">↺ Reset</button>
+      <button class="btn btn-primary" onclick="closeDayModal()">Save & Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Report Modal -->
 <div class="report-overlay" id="reportOverlay">
   <div class="report-modal">
@@ -1278,7 +1520,7 @@ function render() {
     const tab = document.createElement('div');
     tab.className = `day-tab ${isActive ? 'active' : ''} ${isToday ? 'today' : ''} ${fullyDone ? 'fully-done' : ''}`;
     tab.innerHTML = `<span class="day-name">${WEEK_DAYS[d]}</span><span class="day-count">${done}/${allTasksCount}</span>`;
-    tab.onclick = () => { selectedDayIndex = d; render(); };
+    tab.onclick = () => { selectedDayIndex = d; render(); openDayModal(d); };
     tabsEl.appendChild(tab);
   }
 
@@ -1676,6 +1918,126 @@ function deleteCustomTask(taskId, e) {
   saveCustomTasks(customTasks);
   showToast(`↺ Task deleted`);
   render();
+}
+
+// ── DAY DETAIL MODAL ────────────────────────────────────────────────────────
+let dmDayIndex = 0;
+
+function openDayModal(dayIdx) {
+  dmDayIndex = dayIdx;
+  document.getElementById('dayModal').classList.add('open');
+  renderDayModal();
+}
+
+function closeDayModal() {
+  document.getElementById('dayModal').classList.remove('open');
+  render(); // refresh main view after edits
+}
+
+function getModalDate(dayIdx) {
+  const weekStart = getWeekStart(weekOffset);
+  const d = new Date(weekStart + 'T00:00:00');
+  d.setDate(d.getDate() + dayIdx);
+  return d;
+}
+
+function renderDayModal() {
+  const weekStart = getWeekStart(weekOffset);
+  const allTasks = getAllTasks();
+  const alarms = loadAlarmTimes();
+  const dayData = loadDayData(weekStart, dmDayIndex) || allTasks.map(t => ({ id: t.id, done: false }));
+  const waterCups = loadWaterData(weekStart, dmDayIndex);
+  const date = getModalDate(dmDayIndex);
+
+  // Header
+  document.getElementById('dmTitle').textContent = WEEK_DAYS_FULL[dmDayIndex];
+  document.getElementById('dmDate').textContent = date.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  // Progress
+  const done = dayData.filter(t => t.done).length;
+  const pct = allTasks.length ? Math.round(done / allTasks.length * 100) : 0;
+  document.getElementById('dmProgressFill').style.width = pct + '%';
+  document.getElementById('dmProgressLabel').textContent = `${done} of ${allTasks.length} tasks done (${pct}%)`;
+
+  // Task list
+  const list = document.getElementById('dmTaskList');
+  list.innerHTML = '';
+  allTasks.forEach(task => {
+    const state = dayData.find(t => t.id === task.id) || { id: task.id, done: false };
+    const alarmTime = alarms[task.id] || task.defaultTime;
+    const row = document.createElement('div');
+    row.className = `dm-task ${state.done ? 'dm-done' : ''}`;
+    row.innerHTML = `
+      <span class="dm-emoji">${task.emoji}</span>
+      <div class="dm-info">
+        <div class="dm-name">${task.name}</div>
+        <div class="dm-time">⏰ ${alarmTime || '—'}</div>
+      </div>
+      <div class="dm-check">${state.done ? '✓' : ''}</div>
+    `;
+    row.onclick = () => dmToggleTask(task.id);
+    list.appendChild(row);
+  });
+
+  // Water
+  const waterFilled = waterCups.filter(Boolean).length;
+  const waterPct = Math.round(waterFilled / WATER_CUPS * 100);
+  document.getElementById('dmWaterBadge').textContent = `${waterFilled}/${WATER_CUPS} · ${waterFilled * 100}ml`;
+  document.getElementById('dmWaterFill').style.width = waterPct + '%';
+
+  const wGrid = document.getElementById('dmWaterGrid');
+  wGrid.innerHTML = '';
+  waterCups.forEach((filled, i) => {
+    const cup = document.createElement('div');
+    cup.className = `dm-cup ${filled ? 'dm-filled' : ''}`;
+    cup.title = `${(i+1)*100}ml`;
+    cup.textContent = filled ? '💧' : '○';
+    cup.onclick = () => dmToggleWater(i);
+    wGrid.appendChild(cup);
+  });
+}
+
+function dmToggleTask(taskId) {
+  const weekStart = getWeekStart(weekOffset);
+  const allTasks = getAllTasks();
+  const dayData = loadDayData(weekStart, dmDayIndex) || allTasks.map(t => ({ id: t.id, done: false }));
+  let task = dayData.find(t => t.id === taskId);
+  if (!task) { task = { id: taskId, done: false }; dayData.push(task); }
+  task.done = !task.done;
+  saveDayData(weekStart, dmDayIndex, dayData);
+  const taskName = allTasks.find(t => t.id === taskId)?.name || '';
+  showToast(task.done ? `✓ ${taskName}` : `↺ Unmarked`);
+  renderDayModal();
+}
+
+function dmToggleWater(index) {
+  const weekStart = getWeekStart(weekOffset);
+  const cups = loadWaterData(weekStart, dmDayIndex);
+  cups[index] = !cups[index];
+  saveWaterData(weekStart, dmDayIndex, cups);
+  const filled = cups.filter(Boolean).length;
+  if (filled === WATER_CUPS) showToast('🎉 3 Litres complete!');
+  else showToast(cups[index] ? `💧 ${filled * 100}ml` : `↺ Unmarked`);
+  renderDayModal();
+}
+
+function dmMarkAllDone() {
+  const weekStart = getWeekStart(weekOffset);
+  const allTasks = getAllTasks();
+  saveDayData(weekStart, dmDayIndex, allTasks.map(t => ({ id: t.id, done: true })));
+  saveWaterData(weekStart, dmDayIndex, new Array(WATER_CUPS).fill(true));
+  showToast('✓ All done for this day!');
+  renderDayModal();
+}
+
+function dmResetDay() {
+  if (!confirm('Reset all tasks for this day?')) return;
+  const weekStart = getWeekStart(weekOffset);
+  const allTasks = getAllTasks();
+  saveDayData(weekStart, dmDayIndex, allTasks.map(t => ({ id: t.id, done: false })));
+  saveWaterData(weekStart, dmDayIndex, new Array(WATER_CUPS).fill(false));
+  showToast('↺ Day reset');
+  renderDayModal();
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
